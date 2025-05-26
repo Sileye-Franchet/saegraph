@@ -14,26 +14,7 @@ import org.jgrapht.util.SupplierUtil;
  */
 public class App {
 
-    public static Set<String> collaborateursProches(Map<String, Set<String>> G, String u, int k) {
-        if (!G.containsKey(u)) {
-            return null;
-        }
-        Set<String> collaborateurs = new HashSet<>();
-        collaborateurs.add(u);
-        for (int i = 1; i <= k; i++) {
-            Set<String> collaborateursDirects = new HashSet<>();
-            for (String c : collaborateurs) {
-                Set<String> voisins = G.getOrDefault(c, new HashSet<>());
-                for (String v : voisins) {
-                    if (!collaborateurs.contains(v)) {
-                        collaborateursDirects.add(v);
-                    }
-                }
-            }
-            collaborateurs.addAll(collaborateursDirects);
-        }
-        return collaborateurs;
-    }
+    
 
 	
 	public static void main(String[] args) {
