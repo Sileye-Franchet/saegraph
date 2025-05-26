@@ -1,6 +1,13 @@
 package fr.univ_orleans.iut45.r207.SAEgraph;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,6 +15,9 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Hello JGraphT!
@@ -61,6 +71,31 @@ public class App {
 		for (DefaultEdge e : graph.edgeSet()) {
 			System.out.println("edge: " + e);
 		}
+		
+		// lecture json file
+        try {
+            String jsonString = new String(Files.readAllBytes(Paths.get("data.txt")));
+
+            Gson gson = new Gson();
+
+            // Définir le type List<Personne>
+            Type listType = new TypeToken<List<Film>>(){}.getType();
+
+            // Parser le JSON en liste d'objets Personne
+            List<Film> films = gson.fromJson(jsonString, listType);
+
+            // Afficher chaque personne
+            for (Film p : films) {
+                System.out.println("Film: " + p.getTitle() + ", Cast: " + p.getCast() + 
+                                   ", Directors: " + p.getDirectors() + 
+                                   ", Producers: " + p.getProducers() + 
+                                   ", Companies: " + p.getCompanies() + 
+                                   ", Year: " + p.getYear());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		
 	}
 	
