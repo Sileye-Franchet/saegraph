@@ -34,8 +34,12 @@ public class App {
 	public static void main(String[] args) {
         List<Film> films = new ArrayList<>();
 		
+<<<<<<< HEAD
 		Graph<Film, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
 
+=======
+		Graph<Map<List<String>, String>, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+>>>>>>> 95419e8 (supression de se qui ne sert pas)
 		
 		// lecture json file
         try {
@@ -46,7 +50,16 @@ public class App {
             Type listType = new TypeToken<List<Film>>(){}.getType();
 
             // Parser le JSON en liste d'objets Personne
+<<<<<<< HEAD
             films = gson.fromJson(jsonString, listType);
+=======
+            List<Film> films = gson.fromJson(jsonString, listType);
+
+            // ???
+            for (Film p : films) {
+                // trouver quoi faire
+            }
+>>>>>>> 95419e8 (supression de se qui ne sert pas)
 
         } catch (Exception e) {
             e.printStackTrace();
