@@ -9,9 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Scanner;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -30,16 +33,34 @@ import com.google.gson.reflect.TypeToken;
  * Hello JGraphT!
  */
 public class App {
+
+    public static List<String> getNeighbors(Graph<String, DefaultEdge> g, String u) {
+        List<String> neighbors = new ArrayList<>();
+        for (DefaultEdge edge : g.edgesOf(u)){
+            String source = g.getEdgeSource(edge);
+            String target = g.getEdgeTarget(edge);
+            if (!source.equals(u)) {
+                neighbors.add(source);
+            }
+            if (!target.equals(u)) {
+                neighbors.add(target);
+            }
+        }
+        return neighbors;
+    }
+
 	
 	public static void main(String[] args) {
         List<Film> films = new ArrayList<>();
-		
-<<<<<<< HEAD
-		Graph<Film, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+        Set<String> casts = new HashSet<>();
 
-=======
-		Graph<Map<List<String>, String>, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
->>>>>>> 95419e8 (supression de se qui ne sert pas)
+        Queue<String> file = new LinkedList<>();
+        Set<String> visites = new HashSet<>();
+        int taille = 1;
+
+        Scanner scanner = new Scanner(System.in);
+		
+		Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
 		
 		// lecture json file
         try {
@@ -49,43 +70,63 @@ public class App {
 
             Type listType = new TypeToken<List<Film>>(){}.getType();
 
-            // Parser le JSON en liste d'objets Personne
-<<<<<<< HEAD
+            // Parser le JSON en liste d'objets Film
             films = gson.fromJson(jsonString, listType);
-=======
-            List<Film> films = gson.fromJson(jsonString, listType);
 
-            // ???
-            for (Film p : films) {
-                // trouver quoi faire
             }
->>>>>>> 95419e8 (supression de se qui ne sert pas)
-
-        } catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
-        for (Film film : films){
-            graph.addVertex(film);
+        // ajout des sommets et création de l'ensemble des casts
+        for (Film film : films) {
+            for (String cast : film.getCast()){
+                graph.addVertex(cast);
+                casts.add(cast);
+            }
         }
 
-        for (Film film : graph.vertexSet()) {
-            for (Film coFilm : films) {
-                List<String> coCast = film.getCast();
-                if (!film.equals(coFilm) && coCast.retainAll(film.getCast())) {
-                    graph.addEdge(film, coFilm);
+        // ajout des arrêtes
+        System.out.println("add arrêtes");
+        for (String castSommet : graph.vertexSet()){
+            for (Film film : films) {
+                if (film.getCast().contains(castSommet)){
+                    for (String cast : film.getCast()){
+                        if (!cast.equals(castSommet) && !graph.containsEdge(cast, castSommet) && !graph.containsEdge(castSommet, cast)){
+                            graph.addEdge(cast, castSommet);
+                            System.out.println("arrête ajout");
+                        }
+                    }
+                }
+                else{
+                    System.out.println("pass film");
                 }
             }
         }
 
-        try{
-			DOTExporter<Film, DefaultEdge> exporter = new DOTExporter<Film, DefaultEdge>();
-			exporter.setVertexAttributeProvider((x) -> Map.of("label", new DefaultAttribute<>(x, AttributeType.STRING)));
-			exporter.exportGraph(graph, new FileWriter("graph.dot"));
-		}
-		catch (IOException e){
-			e.printStackTrace();
-		}
+
+        System.out.println("Acteur départ: ");
+        String depart = scanner.next();
+
+        System.out.println("Acteur final: ");
+        String fin = scanner.next();
+        scanner.close();
+
+        file.add(depart);
+
+        while (!file.isEmpty() && !visites.contains(fin)) {
+            String sommet = file.poll();
+            taille += 1;
+
+            for (String voisin : getNeighbors(graph, sommet)) {
+                if (!visites.contains(voisin)) {
+                    file.add(voisin);
+                    visites.add(voisin);
+                }
+            }
+        }
+
+        System.out.println("Chemin: " + visites + " taille: " + taille);
 		
 	}
 	
