@@ -1,8 +1,5 @@
 package fr.univ_orleans.iut45.r207.SAEgraph;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -11,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Scanner;
@@ -19,12 +15,6 @@ import java.util.Scanner;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.util.SupplierUtil;
-
-import org.jgrapht.nio.dot.DOTExporter;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.AttributeType;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,7 +40,7 @@ public class App {
     }
 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
         List<Film> films = new ArrayList<>();
         Set<String> casts = new HashSet<>();
 
@@ -64,7 +54,7 @@ public class App {
 		
 		// lecture json file
         try {
-            String jsonString = new String(Files.readAllBytes(Paths.get("data.txt")));
+            String jsonString = new String(Files.readAllBytes(Paths.get("data_100.txt")));
 
             Gson gson = new Gson();
 
@@ -87,29 +77,26 @@ public class App {
         }
 
         // ajout des arrêtes
-        System.out.println("add arrêtes");
         for (String castSommet : graph.vertexSet()){
             for (Film film : films) {
                 if (film.getCast().contains(castSommet)){
                     for (String cast : film.getCast()){
                         if (!cast.equals(castSommet) && !graph.containsEdge(cast, castSommet) && !graph.containsEdge(castSommet, cast)){
                             graph.addEdge(cast, castSommet);
-                            System.out.println("arrête ajout");
                         }
                     }
-                }
-                else{
-                    System.out.println("pass film");
                 }
             }
         }
 
 
-        System.out.println("Acteur départ: ");
-        String depart = scanner.next();
 
-        System.out.println("Acteur final: ");
-        String fin = scanner.next();
+
+        System.out.print("Acteur départ: ");
+        String depart = scanner.nextLine();
+
+        System.out.print("Acteur final: ");
+        String fin = scanner.nextLine();
         scanner.close();
 
         file.add(depart);
